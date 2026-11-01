@@ -6,10 +6,13 @@ import { button, segmented } from '@/components/app/styles';
 import { PageHeader } from '@/components/shell/page-header';
 import { BackupError } from '@/lib/backup';
 import { db } from '@/lib/db';
-import { LANGS, setLang, t, useLang } from '@/lib/i18n';
+import { LANGS, setLang, t, useLang, type DictKey } from '@/lib/i18n';
 import { requestPersistence, storageUsage } from '@/lib/media-store';
 import { RATE_OPTIONS, REPEAT_OPTIONS, updateSettings, useSettings } from '@/lib/settings';
+import { THEMES, setTheme, useTheme, type Theme } from '@/lib/theme';
 import { deletePlaylist, exportBackup, importBackup } from '@/lib/repo';
+
+const THEME_LABELS: Record<Theme, DictKey> = { system: 'settings.themeSystem', light: 'settings.themeLight', dark: 'settings.themeDark' };
 
 const formatBytes = (bytes: number) => {
   if (bytes >= 1e9) return `${(bytes / 1e9).toFixed(1)} GB`;
@@ -19,7 +22,7 @@ const formatBytes = (bytes: number) => {
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-3 border-b border-[#ececec] py-6 last:border-b-0">
+    <section className="flex flex-col gap-3 border-b border-line py-6 last:border-b-0">
       <div className="flex flex-col gap-1">
         <h2 className="m-0 text-[15px] font-semibold">{title}</h2>
         {hint && <p className="m-0 max-w-[60ch] text-sm leading-relaxed text-neutral-600">{hint}</p>}
@@ -32,6 +35,7 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
 export function SettingsView() {
   const lang = useLang();
   const settings = useSettings();
+  const theme = useTheme();
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState('');
   const [storage, setStorage] = useState<{ usage: number; quota: number; persisted: boolean } | null>(null);
@@ -81,6 +85,14 @@ export function SettingsView() {
           <div className={segmented.group} role="group" aria-label={t('settings.language')}>
             {LANGS.map(option => (
               <button key={option.code} type="button" aria-pressed={lang === option.code} className={segmented.item(lang === option.code)} onClick={() => setLang(option.code)}>{option.label}</button>
+            ))}
+          </div>
+        </Section>
+
+        <Section title={t('settings.theme')}>
+          <div className={segmented.group} role="group" aria-label={t('settings.theme')}>
+            {THEMES.map(option => (
+              <button key={option} type="button" aria-pressed={theme === option} className={segmented.item(theme === option)} onClick={() => setTheme(option)}>{t(THEME_LABELS[option])}</button>
             ))}
           </div>
         </Section>

@@ -31,7 +31,7 @@ export function InstallHint() {
     listeners.forEach(listener => listener());
   };
   return (
-    <div role="note" className="flex items-start gap-3 rounded-xl bg-[#f8f8f8] p-4 text-sm">
+    <div role="note" className="flex items-start gap-3 rounded-xl bg-subtle p-4 text-sm">
       <Share className="mt-0.5 size-4 shrink-0 text-neutral-700" aria-hidden />
       <div className="flex flex-1 flex-col gap-1">
         <strong className="font-semibold">{t('pwa.title')}</strong>

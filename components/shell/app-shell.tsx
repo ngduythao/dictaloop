@@ -1,13 +1,14 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Menu, PanelLeftClose, PanelLeftOpen, PenLine, Repeat, Route, SlidersHorizontal, Upload, type LucideIcon } from 'lucide-react';
+import { Menu, Moon, PanelLeftClose, PanelLeftOpen, PenLine, Repeat, Route, SlidersHorizontal, Sun, Upload, type LucideIcon } from 'lucide-react';
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { db } from '@/lib/db';
 import { LANGS, applyStoredLang, setLang, t, useLang, type DictKey } from '@/lib/i18n';
 import { appHref, pageOf, type Page } from '@/lib/paths';
 import { lessonStats } from '@/lib/progress';
+import { toggleTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const NAV: { page: Page; label: DictKey; icon: LucideIcon }[] = [
@@ -39,7 +40,7 @@ function setCollapsed(value: boolean) {
 function Brand({ compact }: { compact?: boolean }) {
   return (
     <a href={appHref('/')} className="flex items-center gap-2.5 rounded-lg p-1.5 text-neutral-900 no-underline">
-      <span className="grid size-[34px] shrink-0 place-items-center rounded-[9px] bg-neutral-900 text-white">
+      <span className="grid size-[34px] shrink-0 place-items-center rounded-[9px] bg-neutral-900 text-surface">
         <Repeat className="size-[18px]" aria-hidden />
       </span>
       {!compact && (
@@ -65,7 +66,7 @@ function NavLinks({ active, compact, roadmapCount }: { active: Page; compact?: b
             title={compact ? t(label) : undefined}
             className={cn(
               'flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm no-underline transition-colors',
-              current ? 'bg-white font-medium text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.03)]' : 'text-neutral-700 hover:bg-black/[0.04]',
+              current ? 'bg-surface font-medium text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.03)]' : 'text-neutral-700 hover:bg-hover',
               compact && 'justify-center px-0',
             )}
           >
@@ -89,12 +90,29 @@ function LanguageSwitch() {
           type="button"
           aria-pressed={lang === option.code}
           onClick={() => setLang(option.code)}
-          className={cn('flex-1 rounded-[7px] py-1.5 text-[13px]', lang === option.code ? 'bg-white font-medium text-neutral-900 shadow-sm' : 'text-neutral-600')}
+          className={cn('flex-1 rounded-[7px] py-1.5 text-[13px]', lang === option.code ? 'bg-surface font-medium text-neutral-900 shadow-sm' : 'text-neutral-600')}
         >
           {option.label}
         </button>
       ))}
     </div>
+  );
+}
+
+// Both labels are rendered and CSS picks one from data-theme, so the pre-rendered
+// HTML is right before hydration.
+function ThemeToggle({ compact, className }: { compact?: boolean; className?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className={cn('flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm text-neutral-600 hover:bg-hover', compact && 'justify-center px-0', className)}
+    >
+      <Moon className="size-4 dark:hidden" aria-hidden />
+      <Sun className="hidden size-4 dark:block" aria-hidden />
+      <span className={cn('dark:hidden', compact && 'sr-only')}>{t('theme.toDark')}</span>
+      <span className={cn('hidden dark:inline', compact && 'sr-only')}>{t('theme.toLight')}</span>
+    </button>
   );
 }
 
@@ -111,17 +129,18 @@ export function AppShell({ children }: { children: ReactNode }) {
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
   return (
-    <div className="flex min-h-dvh bg-white text-[14px] text-neutral-900">
-      <aside className={cn('sticky top-0 hidden h-dvh shrink-0 flex-col gap-3 border-r border-[#ececec] bg-[#f8f8f8] px-2.5 py-3 md:flex', collapsed ? 'w-16' : 'w-60')}>
+    <div className="flex min-h-dvh bg-surface text-[14px] text-neutral-900">
+      <aside className={cn('sticky top-0 hidden h-dvh shrink-0 flex-col gap-3 border-r border-line bg-subtle px-2.5 py-3 md:flex', collapsed ? 'w-16' : 'w-60')}>
         <Brand compact={collapsed} />
         <NavLinks active={active} compact={collapsed} roadmapCount={roadmapCount} />
         <div className="flex-1" />
         {!collapsed && <LanguageSwitch />}
+        <ThemeToggle compact={collapsed} />
         <button
           type="button"
           onClick={toggleCollapsed}
           aria-label={collapsed ? t('nav.expand') : undefined}
-          className={cn('flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm text-neutral-600 hover:bg-black/[0.04]', collapsed && 'justify-center px-0')}
+          className={cn('flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm text-neutral-600 hover:bg-hover', collapsed && 'justify-center px-0')}
         >
           {collapsed ? <PanelLeftOpen className="size-4" aria-hidden /> : <PanelLeftClose className="size-4" aria-hidden />}
           {!collapsed && t('nav.collapse')}
@@ -129,15 +148,16 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-center justify-between gap-2 border-b border-[#ececec] px-2 py-1.5 md:hidden">
+        <div className="flex items-center justify-between gap-2 border-b border-line px-2 py-1.5 md:hidden">
           <Brand />
+          <ThemeToggle compact className="ml-auto size-11 text-neutral-700" />
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button type="button" aria-label={t('nav.openMenu')} className="grid size-11 place-items-center rounded-lg text-neutral-700 hover:bg-neutral-100">
                 <Menu className="size-5" aria-hidden />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 gap-3 bg-[#f8f8f8] p-3">
+            <SheetContent side="left" className="w-72 gap-3 bg-subtle p-3">
               <SheetTitle className="sr-only">{t('nav.aria')}</SheetTitle>
               <Brand />
               <NavLinks active={active} roadmapCount={roadmapCount} />

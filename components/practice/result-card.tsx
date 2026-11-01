@@ -19,13 +19,13 @@ export function ResultCard({ target, comparison, onReplay, onNext, nextLabel }: 
   const words = markTargetWords(target, comparison);
   const toFix = Math.max(comparison.missing.length, comparison.extra.length);
   const badge = comparison.correct
-    ? { text: t('pr.correctBadge'), className: 'bg-[#e3f4ea] text-[#1f6b45]' }
+    ? { text: t('pr.correctBadge'), className: 'bg-success-soft text-success' }
     : comparison.score >= 70
-      ? { text: t('pr.partialBadge', { p: comparison.score }), className: 'bg-[#fff1d6] text-[#7a4a00]' }
-      : { text: t('pr.wrongBadge', { p: comparison.score }), className: 'bg-[#fde8e7] text-[#a3261c]' };
+      ? { text: t('pr.partialBadge', { p: comparison.score }), className: 'bg-warning-soft text-warning' }
+      : { text: t('pr.wrongBadge', { p: comparison.score }), className: 'bg-danger-soft text-danger' };
 
   return (
-    <section aria-live="polite" className="flex flex-col gap-3.5 rounded-xl border border-[#ececec] px-5 py-4">
+    <section aria-live="polite" className="flex flex-col gap-3.5 rounded-xl border border-line px-5 py-4">
       <div className="flex items-center gap-2.5">
         <span className={cn('inline-flex min-h-6 items-center rounded-full px-2.5 text-xs font-semibold', badge.className)}>{badge.text}</span>
         {!comparison.correct && toFix > 0 && <span className="text-[13px] text-neutral-600">{tn('pr.toFix', toFix, { n: toFix })}</span>}
@@ -35,14 +35,14 @@ export function ResultCard({ target, comparison, onReplay, onNext, nextLabel }: 
           <LookupWord
             key={`${word.text}-${index}`}
             text={word.text}
-            className={word.missing ? 'bg-[#fff1d6] text-[#7a4a00] hover:bg-[#ffe7b8]' : undefined}
+            className={word.missing ? 'bg-warning-soft text-warning hover:bg-warning-soft-hover' : undefined}
           />
         ))}
       </p>
       {comparison.extra.length > 0 && (
         <p className="m-0 flex flex-wrap gap-2 text-[13px]">
           <span className="text-neutral-600">{t('pr.youWrote')}</span>
-          {comparison.extra.map((word, index) => <s key={`${word}-${index}`} className="text-[#b42318]">{word}</s>)}
+          {comparison.extra.map((word, index) => <s key={`${word}-${index}`} className="text-danger">{word}</s>)}
         </p>
       )}
       <div className="flex flex-wrap gap-2.5 pt-1">

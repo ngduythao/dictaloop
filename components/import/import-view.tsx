@@ -244,7 +244,7 @@ export function ImportView() {
                         <span className="truncate px-1 text-xs text-neutral-500">{detail}</span>
                       </span>
                       <span className="hidden shrink-0 flex-col items-end gap-1 text-xs text-neutral-600 sm:flex">
-                        <span className="inline-flex items-center gap-1">{status !== t('imp.autoRecognise') && <Check className="size-3.5 text-[#1f7a4d]" aria-hidden />}{status}</span>
+                        <span className="inline-flex items-center gap-1">{status !== t('imp.autoRecognise') && <Check className="size-3.5 text-success" aria-hidden />}{status}</span>
                         {item.kind === 'file' && item.transcript && <span className="inline-flex items-center gap-1"><FileText className="size-3.5" aria-hidden />{t('imp.hasTranscript')}</span>}
                       </span>
                       <button type="button" aria-label={t('imp.remove')} className={cn(button.icon, 'size-9')} onClick={() => setPending(current => current.filter(entry => entry.key !== item.key))}>
@@ -258,7 +258,7 @@ export function ImportView() {
           )}
         </main>
 
-        <aside className="flex max-w-full flex-[1_1_300px] flex-col gap-5 self-stretch border-l border-[#ececec] px-6 py-7 max-md:border-l-0 max-md:border-t">
+        <aside className="flex max-w-full flex-[1_1_300px] flex-col gap-5 self-stretch border-l border-line px-6 py-7 max-md:border-l-0 max-md:border-t">
           {([['imp.helpSourcesTitle', 'imp.helpSources'], ['imp.helpFolderTitle', 'imp.helpFolder'], ['imp.helpPrivacyTitle', 'imp.helpPrivacy']] as const).map(([title, body]) => (
             <div key={title} className="flex flex-col gap-1.5">
               <h3 className="m-0 text-[15px] font-semibold">{t(title)}</h3>

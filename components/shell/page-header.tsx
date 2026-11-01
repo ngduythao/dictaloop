@@ -5,7 +5,7 @@ export type Crumb = { label: string; href?: string };
 // Breadcrumb on the left, page actions on the right (the Frappe-style top bar).
 export function PageHeader({ crumbs, actions }: { crumbs: Crumb[]; actions?: ReactNode }) {
   return (
-    <header className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-[#ececec] px-4 py-3 md:px-7">
+    <header className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-line px-4 py-3 md:px-7">
       <p className="m-0 min-w-0 flex-[1_1_280px] truncate text-base text-neutral-500">
         {crumbs.map((crumb, index) => {
           const last = index === crumbs.length - 1;

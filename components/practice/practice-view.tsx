@@ -231,7 +231,7 @@ function LessonPractice({ lesson, playlistTitle, review }: { lesson: Lesson; pla
           if (result) go(nextIndex, true); else void check();
         }
       }}
-      className="w-full resize-y rounded-[10px] border border-transparent bg-neutral-100 px-3.5 py-3 text-[17px] leading-relaxed text-neutral-900 outline-none placeholder:text-neutral-500 focus:border-neutral-300 focus:bg-white"
+      className="w-full resize-y rounded-[10px] border border-transparent bg-neutral-100 px-3.5 py-3 text-[17px] leading-relaxed text-neutral-900 outline-none placeholder:text-neutral-500 focus:border-neutral-300 focus:bg-surface"
     />
   );
 
@@ -350,17 +350,17 @@ function LessonPractice({ lesson, playlistTitle, review }: { lesson: Lesson; pla
               <div className="flex flex-wrap items-center gap-2.5 rounded-xl bg-neutral-100 p-3">
                 <button type="button" aria-label={t('pr.prev')} className={button.icon} disabled={prevIndex === undefined} onClick={() => go(prevIndex)}><ChevronLeft className="size-[18px]" aria-hidden /></button>
                 {player.clipPlaying ? (
-                  <button type="button" className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px] bg-white px-4 font-medium shadow-sm" onClick={player.stop}><Square className="size-3.5 fill-current" aria-hidden />{t('pr.stopSentence')}</button>
+                  <button type="button" className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px] bg-surface px-4 font-medium shadow-sm" onClick={player.stop}><Square className="size-3.5 fill-current" aria-hidden />{t('pr.stopSentence')}</button>
                 ) : (
-                  <button type="button" className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px] bg-white px-4 font-medium shadow-sm disabled:opacity-40" disabled={!media.src && kind !== 'youtube'} onClick={() => void playSentence()}><Play className="size-4 fill-current" aria-hidden />{t('pr.playSentence', { n: index + 1 })}</button>
+                  <button type="button" className="inline-flex min-h-11 items-center gap-2.5 rounded-[10px] bg-surface px-4 font-medium shadow-sm disabled:opacity-40" disabled={!media.src && kind !== 'youtube'} onClick={() => void playSentence()}><Play className="size-4 fill-current" aria-hidden />{t('pr.playSentence', { n: index + 1 })}</button>
                 )}
                 <button type="button" aria-label={t('pr.next')} className={button.icon} disabled={nextIndex === undefined} onClick={() => go(nextIndex)}><ChevronRight className="size-[18px]" aria-hidden /></button>
                 <span className="flex-1" />
-                <button type="button" aria-label={t('pr.repeatsAria', { n: repeats })} className="inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-white px-2.5 text-[13px] text-neutral-700" onClick={() => setRepeats(cycle(REPEAT_OPTIONS, repeats))}><Repeat className="size-3.5" aria-hidden />{t('pr.repeatsButton', { n: repeats })}</button>
-                <button type="button" aria-label={t('pr.speedAria', { r: rate })} className="inline-flex min-h-8 items-center rounded-lg bg-white px-2.5 text-[13px] text-neutral-700" onClick={() => setRate(cycle(RATE_OPTIONS, rate))}>{rate}×</button>
+                <button type="button" aria-label={t('pr.repeatsAria', { n: repeats })} className="inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-surface px-2.5 text-[13px] text-neutral-700" onClick={() => setRepeats(cycle(REPEAT_OPTIONS, repeats))}><Repeat className="size-3.5" aria-hidden />{t('pr.repeatsButton', { n: repeats })}</button>
+                <button type="button" aria-label={t('pr.speedAria', { r: rate })} className="inline-flex min-h-8 items-center rounded-lg bg-surface px-2.5 text-[13px] text-neutral-700" onClick={() => setRate(cycle(RATE_OPTIONS, rate))}>{rate}×</button>
                 {player.clipPlaying && <span className="text-[13px] text-neutral-600">{t('pr.playingRound', { i: player.round, n: repeats })}</span>}
               </div>
-              {player.error && <p role="alert" className="m-0 text-sm text-[#b42318]">{t('pr.loadFailed')}</p>}
+              {player.error && <p role="alert" className="m-0 text-sm text-danger">{t('pr.loadFailed')}</p>}
 
               {!isVisual && showSubtitles && sentence && <p className="m-0 rounded-[10px] border border-dashed border-neutral-300 px-4 py-3 text-[15px] leading-relaxed text-neutral-700">{sentence.text}</p>}
 
@@ -387,7 +387,7 @@ function LessonPractice({ lesson, playlistTitle, review }: { lesson: Lesson; pla
               )}
 
               {sentence && (
-                <details className="border-y border-[#ececec] py-3.5 text-[15px] text-neutral-600">
+                <details className="border-y border-line py-3.5 text-[15px] text-neutral-600">
                   <summary className="cursor-pointer">{t('pr.timing')}</summary>
                   <p className="mb-0 mt-3 text-[13px] leading-relaxed">{t('pr.timingNote')}</p>
                   <div className="mt-3 flex gap-4">
@@ -417,7 +417,7 @@ function LessonPractice({ lesson, playlistTitle, review }: { lesson: Lesson; pla
 
       {sentence && !media.missing && (
         // Thumb-reach actions on phones; the header holds them on larger screens.
-        <div className="fixed inset-x-0 bottom-0 z-30 flex gap-2.5 border-t border-[#ececec] bg-white px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 flex gap-2.5 border-t border-line bg-surface px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 md:hidden">
           <button type="button" className={cn(button.secondary, 'min-h-12 flex-1 rounded-xl')} onClick={() => (player.clipPlaying ? player.stop() : void playSentence())}>
             {player.clipPlaying ? <Square className="size-3.5 fill-current" aria-hidden /> : <Play className="size-4 fill-current" aria-hidden />}
             {player.clipPlaying ? t('pr.stopSentence') : t('pr.replay')}

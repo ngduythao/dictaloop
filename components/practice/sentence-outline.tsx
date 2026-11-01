@@ -33,12 +33,12 @@ export function SentenceOutline({ lesson, sentences, index, onSelect, sentenceLa
   const duration = lesson.durationSec ?? sentences.at(-1)?.end ?? 0;
 
   return (
-    <div className="overflow-hidden rounded-[14px] border border-neutral-200 bg-white shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
-      <div className="flex flex-col gap-2 border-b border-[#ececec] px-4 pb-3.5 pt-4">
+    <div className="overflow-hidden rounded-[14px] border border-neutral-200 bg-surface shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
+      <div className="flex flex-col gap-2 border-b border-line px-4 pb-3.5 pt-4">
         <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-[-0.01em]">{lesson.title}</h2>
         <p className="m-0 text-[13px] text-neutral-500">{tn('pr.lessonMeta', sentences.length, { duration: formatDuration(duration, lang), n: sentences.length })}</p>
         <p className="m-0 mt-1.5 text-sm font-medium">{t('pr.percentChecked', { p: stats.percent })}</p>
-        <div aria-hidden className="h-1 rounded-full bg-[#ececec]"><div className="h-1 rounded-full bg-neutral-900" style={{ width: `${stats.percent}%` }} /></div>
+        <div aria-hidden className="h-1 rounded-full bg-line"><div className="h-1 rounded-full bg-neutral-900" style={{ width: `${stats.percent}%` }} /></div>
         {canTranslate && (
           <div className="mt-2 flex flex-col gap-1.5">
             <div className={segmented.group} role="group" aria-label={t('pr.sentenceLang')}>
@@ -87,8 +87,8 @@ export function SentenceOutline({ lesson, sentences, index, onSelect, sentenceLa
                       {sentenceLang !== 'en' && <span className="line-clamp-2 text-[13px] leading-snug text-neutral-500">{translation ?? '…'}</span>}
                     </span>
                     {progress && (progress.best >= 100
-                      ? <Check className="mt-0.5 size-4 shrink-0 text-[#1f7a4d]" strokeWidth={2.6} aria-label={t('pr.correctAria')} />
-                      : <span className="shrink-0 pt-0.5 text-xs text-[#7a4a00]">{progress.best}%</span>)}
+                      ? <Check className="mt-0.5 size-4 shrink-0 text-success" strokeWidth={2.6} aria-label={t('pr.correctAria')} />
+                      : <span className="shrink-0 pt-0.5 text-xs text-warning">{progress.best}%</span>)}
                   </button>
                 );
               })}
