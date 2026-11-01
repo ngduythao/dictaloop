@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 
 export default function PwaRegister() {
   useEffect(() => {
-    if (!('serviceWorker' in navigator)) return;
+    // Only the built site: in dev the worker would cache unhashed modules and serve stale code.
+    if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) return;
     const register = () => {
       void navigator.serviceWorker.register('/sw.js', { scope: '/' });
     };
