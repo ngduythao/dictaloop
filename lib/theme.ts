@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { DARK_QUERY, THEME_STORAGE_KEY } from './theme-script';
+import { DARK_QUERY, THEME_COLORS, THEME_STORAGE_KEY } from './theme-script';
 
 // Colour theme, kept per browser. 'system' follows the device setting. The
 // resolved theme is the `data-theme` attribute on <html>, first set by THEME_SCRIPT.
@@ -25,9 +25,13 @@ function getTheme(): Theme {
 
 const isDark = () => document.documentElement.dataset.theme === 'dark';
 
+// React can add its own copy of the tag after hydration, so update every one.
+const syncThemeColor = () => document.querySelectorAll('meta[name="theme-color"]').forEach(meta => meta.setAttribute('content', THEME_COLORS[isDark() ? 'dark' : 'light']));
+
 function apply(theme: Theme) {
   const dark = theme === 'dark' || (theme === 'system' && matchMedia(DARK_QUERY).matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  syncThemeColor();
   listeners.forEach(listener => listener());
 }
 
@@ -51,6 +55,7 @@ const subscribe = (listener: () => void) => {
 };
 
 if (typeof window !== 'undefined') {
+  syncThemeColor();
   matchMedia(DARK_QUERY).addEventListener('change', () => { if (getTheme() === 'system') apply('system'); });
 }
 

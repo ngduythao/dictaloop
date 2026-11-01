@@ -23,6 +23,12 @@ export function useMediaPlayer(kind: MediaKind) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentTime = useCallback(() => kind === 'youtube' ? youtube.current?.getCurrentTime() ?? 0 : element.current?.currentTime ?? 0, [kind]);
+  // True once playback has run off the end, which a clip ending past the media never reaches by time.
+  const atEnd = useCallback(() => {
+    if (kind !== 'youtube') return element.current?.ended ?? false;
+    const total = youtube.current?.getDuration() ?? 0;
+    return total > 0 && currentTime() >= total - 0.05;
+  }, [currentTime, kind]);
   const pause = useCallback(() => { if (kind === 'youtube') youtube.current?.pause(); else element.current?.pause(); }, [kind]);
   const seek = useCallback((value: number) => {
     if (kind === 'youtube') youtube.current?.seek(value);
@@ -62,7 +68,7 @@ export function useMediaPlayer(kind: MediaKind) {
           if (id !== run.current) return resolve(false);
           // YouTube reports the old position for a moment after seeking.
           const settling = kind === 'youtube' && performance.now() - startedAt < 650;
-          if (!settling && currentTime() >= clip.end) {
+          if (!settling && (currentTime() >= clip.end || atEnd())) {
             pause();
             if (n < repeats) timer.current = setTimeout(() => void playRound(n + 1), 700);
             else { setClipPlaying(false); resolve(true); }
@@ -77,7 +83,7 @@ export function useMediaPlayer(kind: MediaKind) {
       }
     };
     void playRound(1);
-  }), [currentTime, kind, pause, play, seek, stop]);
+  }), [atEnd, currentTime, kind, pause, play, seek, stop]);
 
   useEffect(() => () => {
     run.current++;

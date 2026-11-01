@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter";
 import "./globals.css";
-import { THEME_SCRIPT } from "@/lib/theme-script";
+import { THEME_COLORS, THEME_SCRIPT } from "@/lib/theme-script";
 import PwaRegister from "./pwa-register";
 
 export const metadata: Metadata = {
@@ -20,11 +20,9 @@ export const metadata: Metadata = {
   },
 };
 
+// lib/theme.ts switches this to the dark colour when the dark theme is on.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1b1b1b" },
-  ],
+  themeColor: THEME_COLORS.light,
 };
 
 export default function RootLayout({

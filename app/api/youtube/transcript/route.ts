@@ -25,28 +25,26 @@ function decodeXml(value: string) {
     .replace(/&#(\d+);/g, (_, decimal) => String.fromCodePoint(parseInt(decimal, 10)));
 }
 
+// YouTube serves timed text as <p t="ms" d="ms"> (format 3) or <text start="s" dur="s">.
+const TIMED_TEXT_FORMATS = [
+  { pattern: /<p\b[^>]*\bt="(\d+)"[^>]*\bd="(\d+)"[^>]*>([\s\S]*?)<\/p>/g, scale: 1000 },
+  { pattern: /<text\b[^>]*\bstart="([\d.]+)"[^>]*\bdur="([\d.]+)"[^>]*>([\s\S]*?)<\/text>/g, scale: 1 },
+];
+
 function parseTimedText(xml: string) {
-  const chunks: YouTubeChunk[] = [];
-  const paragraph = /<p\b[^>]*\bt="(\d+)"[^>]*\bd="(\d+)"[^>]*>([\s\S]*?)<\/p>/g;
-  for (const match of xml.matchAll(paragraph)) {
-    const start = Number(match[1]) / 1000;
-    const duration = Number(match[2]) / 1000;
-    const rawText = decodeXml(match[3].replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
-    const text = rawText.replace(/[♪♫]+/g, '').replace(/\s+/g, ' ').trim();
-    const spoken = /[a-z]/i.test(text) && !/^\s*[[(].*[)\]]\s*$/i.test(text);
-    if (spoken && duration > 0) chunks.push({ start, end: start + duration, text, breakAfter: /[♪♫]/.test(rawText) });
+  for (const { pattern, scale } of TIMED_TEXT_FORMATS) {
+    const chunks: YouTubeChunk[] = [];
+    for (const match of xml.matchAll(pattern)) {
+      const start = Number(match[1]) / scale;
+      const duration = Number(match[2]) / scale;
+      const rawText = decodeXml(match[3].replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+      const text = rawText.replace(/[♪♫]+/g, '').replace(/\s+/g, ' ').trim();
+      const spoken = /[a-z]/i.test(text) && !/^\s*[[(].*[)\]]\s*$/i.test(text);
+      if (spoken && duration > 0) chunks.push({ start, end: start + duration, text, breakAfter: /[♪♫]/.test(rawText) });
+    }
+    if (chunks.length) return chunks;
   }
-  if (chunks.length) return chunks;
-  const classic = /<text\b[^>]*\bstart="([\d.]+)"[^>]*\bdur="([\d.]+)"[^>]*>([\s\S]*?)<\/text>/g;
-  for (const match of xml.matchAll(classic)) {
-    const start = Number(match[1]);
-    const duration = Number(match[2]);
-    const rawText = decodeXml(match[3].replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
-    const text = rawText.replace(/[♪♫]+/g, '').replace(/\s+/g, ' ').trim();
-    const spoken = /[a-z]/i.test(text) && !/^\s*[[(].*[)\]]\s*$/i.test(text);
-    if (spoken && duration > 0) chunks.push({ start, end: start + duration, text, breakAfter: /[♪♫]/.test(rawText) });
-  }
-  return chunks;
+  return [];
 }
 
 function segmentYouTubeChunks(chunks: YouTubeChunk[]) {
@@ -68,7 +66,7 @@ function segmentYouTubeChunks(chunks: YouTubeChunk[]) {
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get('id')?.trim() || '';
   if (!/^[\w-]{11}$/.test(id)) {
-    return NextResponse.json({ error: 'Link YouTube không đúng định dạng.' }, { status: 400, headers: corsHeaders });
+    return NextResponse.json({ error: 'Invalid YouTube video id.' }, { status: 400, headers: corsHeaders });
   }
   try {
     const playerResponse = await fetch('https://www.youtube.com/youtubei/v1/player?prettyPrint=false', {
@@ -82,25 +80,25 @@ export async function GET(request: NextRequest) {
         videoId: id,
       }),
     });
-    if (!playerResponse.ok) throw new Error('YouTube tạm thời chưa trả về thông tin video.');
+    if (!playerResponse.ok) throw new Error('YouTube did not return the video details.');
     const player = await playerResponse.json() as {
       playabilityStatus?: { status?: string; reason?: string };
       videoDetails?: { title?: string; lengthSeconds?: string };
       captions?: { playerCaptionsTracklistRenderer?: { captionTracks?: CaptionTrack[] } };
     };
     if (player.playabilityStatus?.status !== 'OK') {
-      throw new Error(player.playabilityStatus?.reason || 'Video YouTube này không phát được.');
+      throw new Error(player.playabilityStatus?.reason || 'This YouTube video cannot be played.');
     }
     const tracks = player.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
     const englishTracks = tracks.filter(track => /^en(?:-|$)/i.test(track.languageCode));
     const track = englishTracks.find(item => item.kind !== 'asr') || englishTracks[0];
-    if (!track) throw new Error('Video này không có phụ đề tiếng Anh dùng được. Hãy chọn video khác có phụ đề tiếng Anh.');
+    if (!track) throw new Error('This video has no usable English subtitles.');
     const captionUrl = new URL(track.baseUrl);
-    if (!captionUrl.hostname.endsWith('.youtube.com')) throw new Error('Link phụ đề không hợp lệ.');
+    if (!captionUrl.hostname.endsWith('.youtube.com')) throw new Error('Invalid subtitle link.');
     const captionResponse = await fetch(captionUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
     const xml = await captionResponse.text();
     const chunks = parseTimedText(xml);
-    if (!chunks.length) throw new Error('YouTube không trả về phụ đề tiếng Anh đọc được.');
+    if (!chunks.length) throw new Error('YouTube returned no readable English subtitles.');
     const sentences = segmentYouTubeChunks(chunks);
     const label = track.name?.simpleText || track.name?.runs?.map(item => item.text || '').join('') || 'English';
     return NextResponse.json({
@@ -114,7 +112,7 @@ export async function GET(request: NextRequest) {
     }, { headers: corsHeaders });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Không đọc được phụ đề YouTube.' },
+      { error: error instanceof Error ? error.message : 'Could not read the YouTube subtitles.' },
       { status: 422, headers: corsHeaders },
     );
   }

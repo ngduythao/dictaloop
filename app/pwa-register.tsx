@@ -4,8 +4,13 @@ import { useEffect } from 'react';
 
 export default function PwaRegister() {
   useEffect(() => {
-    // Only the built site: in dev the worker would cache unhashed modules and serve stale code.
-    if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) return;
+    if (!('serviceWorker' in navigator)) return;
+    // Only the built site: in dev a worker caches unhashed modules and serves stale
+    // code, so also remove one left from earlier runs on the same port.
+    if (process.env.NODE_ENV !== 'production') {
+      void navigator.serviceWorker.getRegistrations().then(registrations => registrations.forEach(registration => void registration.unregister()));
+      return;
+    }
     const register = () => {
       void navigator.serviceWorker.register('/sw.js', { scope: '/' });
     };
