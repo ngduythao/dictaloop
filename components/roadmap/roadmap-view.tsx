@@ -64,7 +64,7 @@ function LessonRow({ lesson, isCurrent, isNext }: { lesson: Lesson; isCurrent: b
         {stats.status === 'done' ? (
           <span className="flex items-center gap-2 text-[13px] text-neutral-600">{stats.average}%<Check className="size-[18px] text-success" strokeWidth={2.6} aria-label={t('rm.statusDone')} /></span>
         ) : stats.status === 'in-progress' ? (
-          <span className={cn('inline-flex min-h-[22px] items-center rounded-full px-2 text-xs font-medium', isCurrent ? 'bg-neutral-900 text-surface' : 'bg-neutral-200 text-neutral-800')}>{t('rm.statusInProgress', { p: stats.percent })}</span>
+          <span className={cn('inline-flex min-h-[22px] items-center rounded-full px-2 text-xs font-medium', isCurrent ? 'bg-neutral-900 text-background' : 'bg-neutral-200 text-neutral-800')}>{t('rm.statusInProgress', { p: stats.percent })}</span>
         ) : (
           <span className="text-[13px] text-neutral-500">{isNext ? t('rm.statusNext') : t('rm.statusNew')}</span>
         )}
@@ -180,7 +180,7 @@ export function RoadmapView() {
               const roundDuration = round.items.reduce((sum, lesson) => sum + (lesson.durationSec ?? 0), 0);
               return (
                 <div key={round.index} className="border-b border-line last:border-b-0">
-                  <button type="button" aria-expanded={open} onClick={() => setOpenRounds(state => ({ ...state, [round.index]: !open }))} className="flex w-full items-center gap-2.5 bg-surface px-4 py-3.5 text-left hover:bg-neutral-50">
+                  <button type="button" aria-expanded={open} onClick={() => setOpenRounds(state => ({ ...state, [round.index]: !open }))} className="flex w-full items-center gap-2.5 bg-background px-4 py-3.5 text-left hover:bg-neutral-50">
                     {open ? <ChevronDown className="size-4 text-neutral-500" aria-hidden /> : <ChevronRight className="size-4 text-neutral-500" aria-hidden />}
                     <span className="flex-1 text-[15px] font-semibold">{t('rm.round', { n: round.index + 1 })}</span>
                     <span className="text-[13px] text-neutral-500">{t('rm.roundMeta', { done: roundDone, total: round.items.length, duration: formatDuration(roundDuration, lang) })}</span>
@@ -228,7 +228,7 @@ export function RoadmapView() {
             <h2 className="m-0 text-[15px] font-semibold">{t('rm.review')}</h2>
             <p className="m-0 text-[13px] leading-relaxed text-neutral-600">{review.length ? tn('rm.reviewBody', review.length, { n: review.length }) : t('rm.reviewNone')}</p>
             {reviewLesson && (
-              <a href={appHref('/practice', { lesson: reviewLesson.id, review: 1 })} className="inline-flex min-h-9 items-center self-start rounded-[9px] bg-surface px-3.5 text-sm font-medium text-neutral-900 no-underline shadow-sm">{t('rm.reviewButton', { n: review.length })}</a>
+              <a href={appHref('/practice', { lesson: reviewLesson.id, review: 1 })} className="inline-flex min-h-9 items-center self-start rounded-[9px] bg-background px-3.5 text-sm font-medium text-neutral-900 no-underline shadow-sm">{t('rm.reviewButton', { n: review.length })}</a>
             )}
           </section>
 

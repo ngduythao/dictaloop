@@ -149,5 +149,5 @@ export const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(function You
   useEffect(() => { if (muted) player.current?.mute(); else player.current?.unMute(); }, [muted]);
   useEffect(() => { player.current?.setPlaybackRate(rate); }, [rate]);
 
-  return <div className="youtube-player" ref={host} aria-label={t('yt.playerAria')} />;
+  return <div ref={host} aria-label={t('yt.playerAria')} />;
 });

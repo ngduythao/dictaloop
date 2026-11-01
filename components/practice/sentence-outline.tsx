@@ -33,7 +33,7 @@ export function SentenceOutline({ lesson, sentences, index, onSelect, sentenceLa
   const duration = lesson.durationSec ?? sentences.at(-1)?.end ?? 0;
 
   return (
-    <div className="overflow-hidden rounded-[14px] border border-neutral-200 bg-surface shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
+    <div className="overflow-hidden rounded-[14px] border border-neutral-200 bg-background shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
       <div className="flex flex-col gap-2 border-b border-line px-4 pb-3.5 pt-4">
         <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-[-0.01em]">{lesson.title}</h2>
         <p className="m-0 text-[13px] text-neutral-500">{tn('pr.lessonMeta', sentences.length, { duration: formatDuration(duration, lang), n: sentences.length })}</p>

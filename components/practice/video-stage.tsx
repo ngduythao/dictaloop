@@ -107,7 +107,7 @@ export function VideoStage({ children, tools, onTools, subtitle, overlay }: { ch
       )}
       {subtitle && <div className="absolute inset-x-[6%] bottom-[10%] rounded-md bg-black/70 px-3 py-1.5 text-center text-base text-white">{subtitle}</div>}
       {overlay && (
-        <div className="absolute left-1/2 -translate-x-1/2 rounded-lg p-2" style={{ top: `${tools.boxTop}%`, width: `${tools.boxWidth}%`, backgroundColor: `color-mix(in srgb, var(--surface) ${tools.boxOpacity}%, transparent)` }}>
+        <div className="absolute left-1/2 -translate-x-1/2 rounded-lg p-2" style={{ top: `${tools.boxTop}%`, width: `${tools.boxWidth}%`, backgroundColor: `color-mix(in srgb, var(--background) ${tools.boxOpacity}%, transparent)` }}>
           {overlay}
         </div>
       )}

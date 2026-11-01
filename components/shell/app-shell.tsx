@@ -40,7 +40,7 @@ function setCollapsed(value: boolean) {
 function Brand({ compact }: { compact?: boolean }) {
   return (
     <a href={appHref('/')} className="flex items-center gap-2.5 rounded-lg p-1.5 text-neutral-900 no-underline">
-      <span className="grid size-[34px] shrink-0 place-items-center rounded-[9px] bg-neutral-900 text-surface">
+      <span className="grid size-[34px] shrink-0 place-items-center rounded-[9px] bg-neutral-900 text-background">
         <Repeat className="size-[18px]" aria-hidden />
       </span>
       {!compact && (
@@ -66,7 +66,7 @@ function NavLinks({ active, compact, roadmapCount }: { active: Page; compact?: b
             title={compact ? t(label) : undefined}
             className={cn(
               'flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm no-underline transition-colors',
-              current ? 'bg-surface font-medium text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.03)]' : 'text-neutral-700 hover:bg-hover',
+              current ? 'bg-background font-medium text-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.03)]' : 'text-neutral-700 hover:bg-hover',
               compact && 'justify-center px-0',
             )}
           >
@@ -90,7 +90,7 @@ function LanguageSwitch() {
           type="button"
           aria-pressed={lang === option.code}
           onClick={() => setLang(option.code)}
-          className={cn('flex-1 rounded-[7px] py-1.5 text-[13px]', lang === option.code ? 'bg-surface font-medium text-neutral-900 shadow-sm' : 'text-neutral-600')}
+          className={cn('flex-1 rounded-[7px] py-1.5 text-[13px]', lang === option.code ? 'bg-background font-medium text-neutral-900 shadow-sm' : 'text-neutral-600')}
         >
           {option.label}
         </button>
@@ -106,6 +106,7 @@ function ThemeToggle({ compact, className }: { compact?: boolean; className?: st
     <button
       type="button"
       onClick={toggleTheme}
+      title={compact ? t('settings.theme') : undefined}
       className={cn('flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-sm text-neutral-600 hover:bg-hover', compact && 'justify-center px-0', className)}
     >
       <Moon className="size-4 dark:hidden" aria-hidden />
@@ -129,7 +130,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const toggleCollapsed = () => setCollapsed(!collapsed);
 
   return (
-    <div className="flex min-h-dvh bg-surface text-[14px] text-neutral-900">
+    <div className="flex min-h-dvh bg-background text-[14px] text-neutral-900">
       <aside className={cn('sticky top-0 hidden h-dvh shrink-0 flex-col gap-3 border-r border-line bg-subtle px-2.5 py-3 md:flex', collapsed ? 'w-16' : 'w-60')}>
         <Brand compact={collapsed} />
         <NavLinks active={active} compact={collapsed} roadmapCount={roadmapCount} />

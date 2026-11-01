@@ -45,7 +45,6 @@
   --ring: #a3a3a3;
   --radius: 0.625rem;
 
-  --surface: #ffffff;
   --subtle: #f8f8f8;
   --line: #ececec;
   --hover: rgb(0 0 0 / 5%);
@@ -80,7 +79,6 @@
   --input: #2f2f2f;
   --ring: #5a5a5a;
 
-  --surface: #1b1b1b;
   --subtle: #141414;
   --line: #2a2a2a;
   --hover: rgb(255 255 255 / 6%);
@@ -125,7 +123,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-surface: var(--surface);
   --color-subtle: var(--subtle);
   --color-line: var(--line);
   --color-hover: var(--hover);

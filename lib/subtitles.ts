@@ -1,11 +1,10 @@
 export type Sentence = { start: number; end: number; text: string };
-export type TimedTranscriptChunk = Sentence;
 const endsSentence = (text: string) => {
   const value = text.trim().replace(/["”')\]]+$/, '');
   return /[!?]$/.test(value) || /(?:^|[^.])\.$/.test(value);
 };
 
-function splitTimedChunk(chunk: TimedTranscriptChunk): TimedTranscriptChunk[] {
+function splitTimedChunk(chunk: Sentence): Sentence[] {
   const parts = chunk.text.match(/[^.!?]+(?:[.!?]+["”')\]]*)?|[.!?]+/g)?.map(part => part.trim()).filter(Boolean) || [];
   if (parts.length <= 1) return [{ ...chunk, text: chunk.text.trim() }];
   const totalWeight = parts.reduce((sum, part) => sum + Math.max(1, part.replace(/\s/g, '').length), 0);
@@ -19,7 +18,7 @@ function splitTimedChunk(chunk: TimedTranscriptChunk): TimedTranscriptChunk[] {
   });
 }
 
-export function mergeTranscriptChunks(chunks: TimedTranscriptChunk[], maxDuration = 15, maxGap = 1.5, maxWords = 30): Sentence[] {
+export function mergeTranscriptChunks(chunks: Sentence[], maxDuration = 15, maxGap = 1.5, maxWords = 30): Sentence[] {
   const pieces = chunks
     .filter(chunk => chunk.text.trim() && Number.isFinite(chunk.start) && Number.isFinite(chunk.end) && chunk.end > chunk.start)
     .sort((a, b) => a.start - b.start)
