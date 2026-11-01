@@ -8,14 +8,14 @@ Everything runs in the browser and stays on your device. There is no account and
 
 ## Quick start
 
-Requires Node.js 22.13 or later and [pnpm](https://pnpm.io/installation) (the version is pinned in `package.json`; `npm install -g pnpm` installs it).
+Requires Node.js 22.18 or later and [pnpm](https://pnpm.io/installation) (the version is pinned in `package.json`; `npm install -g pnpm` installs it).
 
 ```bash
 pnpm install
 pnpm start
 ```
 
-Open http://localhost:4173. `pnpm start` builds the site and serves it the way GitHub Pages will.
+Open http://localhost:4173. `pnpm start` builds the site and serves it the way Vercel will.
 
 ## Commands
 
@@ -48,9 +48,11 @@ Open http://localhost:4173. `pnpm start` builds the site and serves it the way G
 
 Data belongs to one browser at one address on one device: `pnpm start` (port 4173) and `pnpm dev` (port 5173) keep separate data. To move to another device, use **Settings → Export backup** and import the file there; media files are not included, so the app asks you to choose them again. On iPhone, add the app to the Home Screen, or Safari may clear site data after 7 days without a visit.
 
-## Deploying to GitHub Pages
+## Deploying
 
-Push to `main`: `.github/workflows/pages.yml` runs `pnpm build`, which serves the site under `/<repository name>/` (from `GITHUB_REPOSITORY`). Set `BASE_PATH` to override it. YouTube subtitles on the static site go through the original author's transcript service (`transcriptApiBase` in `lib/sources.ts`); `pnpm dev` serves that route itself.
+The site deploys to Vercel as a static export: import the GitHub repository in Vercel and keep the defaults, since `vercel.json` sets the install and build commands, the `dist/client` output and clean URLs (`/practice` serves `practice.html`). Every push to `main` deploys; `.github/workflows/ci.yml` runs `pnpm check` and `pnpm build` on pushes and pull requests.
+
+YouTube subtitles on the static site go through the original author's transcript service (`transcriptApiBase` in `lib/sources.ts`); `pnpm dev` serves that route itself.
 
 ## Project layout
 
@@ -58,4 +60,4 @@ Push to `main`: `.github/workflows/pages.yml` runs `pnpm build`, which serves th
 - `components/` UI by page (`roadmap`, `practice`, `import`, `settings`), the app shell and six UI primitives in `components/ui`
 - `lib/` data and logic: `db.ts`, `repo.ts`, `media-store.ts`, `progress.ts`, `subtitles.ts` (parsing and grading), `folder-import.ts`, `backup.ts`, `transcribe.ts` + `transcribe.worker.ts` (Whisper), `translate.ts`, `sources.ts`
 - `lib/i18n.en.ts`, `lib/i18n.vi.ts` interface strings; add a language by adding a file with the same keys (TypeScript reports missing keys)
-- `scripts/serve.mjs` local static server, `scripts/prepare-pages.mjs` build step for GitHub Pages paths
+- `scripts/serve.mjs` local static server for the build

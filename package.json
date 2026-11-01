@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "dev": "vinext dev --port 5173",
-    "build": "vinext build && node scripts/prepare-pages.mjs",
+    "build": "vinext build",
     "start": "pnpm build && node scripts/serve.mjs",
     "preview": "node scripts/serve.mjs",
     "test": "node --test lib/*.test.ts",

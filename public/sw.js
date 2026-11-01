@@ -1,11 +1,5 @@
 const CACHE_NAME = 'dictaloop-pwa-v3';
-const scopePath = new URL(self.registration.scope).pathname.replace(/\/$/, '');
-const appShell = [
-  `${scopePath}/`,
-  `${scopePath}/favicon.svg`,
-  `${scopePath}/icon-maskable.svg`,
-  `${scopePath}/manifest.webmanifest`,
-];
+const appShell = ['/', '/favicon.svg', '/icon-maskable.svg', '/manifest.webmanifest'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(appShell)).then(() => self.skipWaiting()));
@@ -38,7 +32,7 @@ self.addEventListener('fetch', event => {
           }
           return response;
         })
-        .catch(async () => (await caches.match(pageKey)) ?? caches.match(`${scopePath}/`)),
+        .catch(async () => (await caches.match(pageKey)) ?? caches.match('/')),
     );
     return;
   }

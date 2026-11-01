@@ -1,4 +1,4 @@
-// Serves the built site (dist/client) the way GitHub Pages does: /practice -> practice.html.
+// Serves the built site (dist/client) the way Vercel does with cleanUrls: /practice -> practice.html.
 // Usage: node scripts/serve.mjs   (PORT=4173 by default)
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
