@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "Dictaloop · English dictation practice",
+  "short_name": "Dictaloop",
+  "description": "Import audio, video and subtitles and practise English dictation sentence by sentence in your browser.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#171717",
+  "orientation": "any",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
